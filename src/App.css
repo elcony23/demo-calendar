@@ -36,3 +36,6 @@
     transform: rotate(360deg);
   }
 }
+.ant-picker-calendar-date-content{
+  height: 30px !important;
+}
