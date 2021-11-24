@@ -1,11 +1,15 @@
-/* eslint-disable no-use-before-define */
 import React from 'react';
 import { DatePicker } from 'antd';
+import { useDispatch } from 'react-redux';
 import logo from './logo.svg';
 import './App.css';
-import 'antd/dist/antd.css';
+import { changeAppointment } from './redux/appointmentSlice';
 
 const App = function () {
+    const dispatch = useDispatch();
+    const testRedux = () => {
+        dispatch(changeAppointment({ appointments: [0, 10, 20] }));
+    };
     return (
         <div className="App">
             <header className="App-header">
@@ -22,7 +26,9 @@ const App = function () {
                     Learn React
                 </a>
             </header>
-
+            <button type="button" onClick={() => testRedux()}>
+                Test Redux
+            </button>
             <DatePicker />
         </div>
     );

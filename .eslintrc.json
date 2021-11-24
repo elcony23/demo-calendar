@@ -27,6 +27,25 @@
     "rules": {
         "prettier/prettier": "error",
         "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx",".ts", ".tsx"] }],
-        "func-names": "off"
+        "func-names": "off",
+        "no-param-reassign":0,
+        "no-use-before-define": 0,
+        "import/extensions": [
+          "error",
+          "ignorePackages",
+          {
+            "js": "never",
+            "jsx": "never",
+            "ts": "never",
+            "tsx": "never"
+          }
+      ]
+    },
+    "settings": {
+      "import/resolver": {
+        "node": {
+            "extensions": [".js", ".jsx", ".ts", ".tsx"]
+        }
+      }
     }
 }
