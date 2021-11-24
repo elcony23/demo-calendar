@@ -1,8 +1,15 @@
 /* eslint-disable import/prefer-default-export */
+import moment from 'moment';
+
 type DayDiffs = {
     startTime: Date;
     endTime: Date;
     appointmentDuration?: Number;
+};
+type TAddDate = {
+    date: Date;
+    quantity: Number;
+    type: String;
 };
 export const diffDaysInMinutes = ({
     startTime,
@@ -25,3 +32,5 @@ export const SATURDAY_EVEN_SCHEDULE = {
     OFFICE_HOUR: '08:00-19:00',
     BREAK_TIME: '11:00-11:30'
 };
+export const addDate = ({ date, quantity, type }: TAddDate) =>
+    moment(date).add(quantity as any, type as string);

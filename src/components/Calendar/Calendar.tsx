@@ -2,7 +2,12 @@ import React, { FC, useState } from 'react';
 import { Calendar as AntCalendar, Layout, Badge } from 'antd';
 import moment from 'moment';
 import Styles from './Calendar.module.scss';
-import { diffDaysInMinutes, EVEN_SCHEDULE, isEvenDay } from '../../utils/utils';
+import {
+    addDate,
+    diffDaysInMinutes,
+    EVEN_SCHEDULE,
+    isEvenDay
+} from '../../utils/utils';
 
 const { Content, Footer, Sider } = Layout;
 
@@ -88,7 +93,7 @@ const Calendar: FC = function () {
                     onChange={(date) => setSelectedDate(date.toDate())}
                 />
             </Sider>
-            <Layout className="site-layout" style={{ marginLeft: 200 }}>
+            <Layout className="site-layout">
                 <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
                     <div
                         className="site-layout-background"
@@ -155,24 +160,27 @@ const Calendar: FC = function () {
 
 const Appointment = function ({ countAppointments, date }: any) {
     return (
-        <div>
-            {[...new Array(countAppointments)].map((value, i) => (
-                <div key={10}>
-                    <div>
-                        {moment(date)
-                            .add(30 * i, 'minutes')
-                            .format('HH:mm')}
-                    </div>
-
-                    <div>
-                        {moment(date)
-                            .add(30 * (i + 1), 'minutes')
-                            .format('HH:mm')}
-                    </div>
-                </div>
-            ))}
+        <div className={Styles['grid-container']}>
+            {[...new Array(countAppointments)].map((value, i) => {
+                const startHour = addDate({
+                    date,
+                    quantity: 30 * i,
+                    type: 'minutes'
+                }).format('HH:mm');
+                const endHour = addDate({
+                    date,
+                    quantity: 30 * (i + 1),
+                    type: 'minutes'
+                }).format('HH:mm');
+                return (
+                    <div
+                        role="none"
+                        onClick={() => alert(`${startHour} - ${endHour}`)}
+                        key={`${startHour} - ${endHour}`}
+                    >{`${startHour} - ${endHour}`}</div>
+                );
+            })}
         </div>
     );
 };
-
 export default Calendar;
