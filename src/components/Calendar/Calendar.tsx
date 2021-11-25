@@ -150,6 +150,7 @@ const Calendar: FC = function () {
                                     ),
                                     appointmentDuration: 30
                                 })}
+                                selectedAppointments={currentAppointments}
                             />
                         </div>
                     </div>
@@ -159,17 +160,52 @@ const Calendar: FC = function () {
     );
 };
 
-const Appointment = function ({ countAppointments, date, onClick }: any) {
+const Appointment = function ({
+    countAppointments,
+    date,
+    onClick,
+    selectedAppointments
+}: any) {
+    const filterAppointmentsByDay = selectedAppointments.filter(
+        (selectedAppointment: any) =>
+            selectedAppointment.date === moment(date).format('DD[/]MM[/]YYYY')
+    );
+    console.log(filterAppointmentsByDay);
     return (
         <div className={Styles['grid-container']}>
             {getAppointmentHours(countAppointments, date).map(
-                (appointmentHour) => (
-                    <div
-                        role="none"
-                        onClick={onClick}
-                        key={appointmentHour.id}
-                    >{`${appointmentHour.startTime} - ${appointmentHour.endTime}`}</div>
-                )
+                (appointmentHour) => {
+                    const filterHours = filterAppointmentsByDay.filter(
+                        (appointment: any) =>
+                            appointment.startTime ===
+                                appointmentHour.startTime &&
+                            appointment.endTime === appointmentHour.endTime
+                    );
+                    return (
+                        <div
+                            role="none"
+                            onClick={onClick}
+                            key={appointmentHour.id}
+                        >
+                            {`${appointmentHour.startTime} - ${appointmentHour.endTime}`}
+                            <div>
+                                {filterHours.map((hour: any) => (
+                                    <div>
+                                        {' '}
+                                        <div
+                                            className="dot"
+                                            style={{
+                                                backgroundColor:
+                                                    hour.appointmentType.color
+                                            }}
+                                        />{' '}
+                                        {hour.description}{' '}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    );
+                }
             )}
         </div>
     );
