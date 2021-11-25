@@ -8,6 +8,7 @@ import {
     EVEN_SCHEDULE,
     isEvenDay
 } from '../../utils/utils';
+import AppointmentDialog from '../AppointmentDialog/AppointmentDialog';
 
 const { Content, Footer, Sider } = Layout;
 
@@ -85,6 +86,7 @@ const Calendar: FC = function () {
     };
     return (
         <Layout>
+            <AppointmentDialog visible />
             <Sider className={Styles['sider-layout']} width={400}>
                 <h1 style={{ color: 'white' }}>Calendar</h1>
                 <AntCalendar

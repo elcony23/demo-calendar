@@ -11,13 +11,11 @@ import { store } from './redux/store';
 import 'antd/dist/antd.css';
 
 ReactDOM.render(
-    <React.StrictMode>
-        <Provider store={store}>
-            <ConfigProvider locale={esES}>
-                <App />
-            </ConfigProvider>
-        </Provider>
-    </React.StrictMode>,
+    <Provider store={store}>
+        <ConfigProvider locale={esES}>
+            <App />
+        </ConfigProvider>
+    </Provider>,
     document.getElementById('root')
 );
 

@@ -34,3 +34,26 @@ export const SATURDAY_EVEN_SCHEDULE = {
 };
 export const addDate = ({ date, quantity, type }: TAddDate) =>
     moment(date).add(quantity as any, type as string);
+
+export const APPOINTMENT_COLOR = {
+    DESIGN: '#3777FF',
+    DEV: '#FFBE86',
+    RH: '#FFB5C2'
+};
+export const appointmentTypes = [
+    {
+        id: 1,
+        description: 'Design board',
+        color: APPOINTMENT_COLOR.DESIGN
+    },
+    {
+        id: 2,
+        description: 'Developers board',
+        color: APPOINTMENT_COLOR.DEV
+    },
+    {
+        id: 3,
+        description: 'RH board',
+        color: APPOINTMENT_COLOR.RH
+    }
+];
