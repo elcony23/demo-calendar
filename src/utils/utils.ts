@@ -19,7 +19,8 @@ export const diffDaysInMinutes = ({
     Math.round((endTime.getTime() - startTime.getTime()) / 60000) /
     Number(appointmentDuration);
 
-export const isEvenDay = (day: Date) => new Date(day).getUTCDate() % 2 === 0;
+export const isEvenDay = (day: Date) =>
+    (moment(day).format('D') as any) % 2 === 0;
 export const EVEN_SCHEDULE = {
     OFFICE_HOUR: '08:00-14:00',
     BREAK_TIME: '11:00-11:30'

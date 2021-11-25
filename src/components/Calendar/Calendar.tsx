@@ -1,6 +1,7 @@
 import React, { FC, useState } from 'react';
 import { Calendar as AntCalendar, Layout, Badge } from 'antd';
 import moment from 'moment';
+import { useDispatch, useSelector } from 'react-redux';
 import Styles from './Calendar.module.scss';
 import {
     addDate,
@@ -9,6 +10,10 @@ import {
     isEvenDay
 } from '../../utils/utils';
 import AppointmentDialog from '../AppointmentDialog/AppointmentDialog';
+import {
+    selectAppointments,
+    setAppointment
+} from '../../redux/appointmentSlice';
 
 const { Content, Footer, Sider } = Layout;
 
@@ -20,9 +25,14 @@ type WarningTypes = 'warning' | 'error' | 'success';
 
 const Calendar: FC = function () {
     const [selectedDate, setSelectedDate] = useState(new Date());
+    const [visibleDialog, setVisibleDialog] = useState(false);
+    const dispatch = useDispatch();
+    const currentAppointments = useSelector(selectAppointments);
+    console.log(currentAppointments);
 
     const getListData = (value: any) => {
         let listData;
+        console.log('value', value);
         switch (value.date()) {
             case 8:
                 listData = [
@@ -84,9 +94,24 @@ const Calendar: FC = function () {
         }
         return disabled;
     };
+    const onAppoinmentClick = (hour: any) => {
+        setVisibleDialog(true);
+    };
+    const onSubmitDialog = (data: any) => {
+        dispatch(
+            setAppointment({
+                ...data,
+                date: moment().format('YYYY-MM-DD HH:mm')
+            })
+        );
+    };
     return (
         <Layout>
-            <AppointmentDialog visible />
+            <AppointmentDialog
+                visible={visibleDialog}
+                onSubmit={onSubmitDialog}
+                onClose={() => setVisibleDialog(false)}
+            />
             <Sider className={Styles['sider-layout']} width={400}>
                 <h1 style={{ color: 'white' }}>Calendar</h1>
                 <AntCalendar
@@ -109,6 +134,7 @@ const Calendar: FC = function () {
                             {isEvenDay(selectedDate) ? (
                                 <>
                                     <Appointment
+                                        onClick={onAppoinmentClick}
                                         date={
                                             new Date(
                                                 moment(selectedDate)
@@ -160,7 +186,7 @@ const Calendar: FC = function () {
     );
 };
 
-const Appointment = function ({ countAppointments, date }: any) {
+const Appointment = function ({ countAppointments, date, onClick }: any) {
     return (
         <div className={Styles['grid-container']}>
             {[...new Array(countAppointments)].map((value, i) => {
@@ -177,7 +203,7 @@ const Appointment = function ({ countAppointments, date }: any) {
                 return (
                     <div
                         role="none"
-                        onClick={() => alert(`${startHour} - ${endHour}`)}
+                        onClick={() => onClick(date)}
                         key={`${startHour} - ${endHour}`}
                     >{`${startHour} - ${endHour}`}</div>
                 );

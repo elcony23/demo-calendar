@@ -1,7 +1,7 @@
-import { appointmentReducer as appointment } from './appointmentSlice';
+import { appointmentReducer as appointments } from './appointmentSlice';
 
 const reducer = {
-    appointment
+    appointments
 };
 
 export default reducer;

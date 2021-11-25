@@ -1,5 +1,6 @@
 import React, { useState, FC } from 'react';
 import { Modal, Button, Input, Select } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
 import { appointmentTypes } from '../../utils/utils';
 import Styles from './AppointmentDialog.module.scss';
 
@@ -7,19 +8,22 @@ const { Option } = Select;
 
 interface Props {
     visible: Boolean;
+    onSubmit: any;
+    onClose: any;
 }
-const AppointmentDialog: FC<Props> = function ({ visible }) {
+const AppointmentDialog: FC<Props> = function ({ visible, onSubmit, onClose }) {
     const [appointmentDescription, setAppointmentDescription] = useState('');
     const [appointmentType, setAppointmentType] = useState(1);
     const onSelectChange = (value: any) => {
         setAppointmentType(value);
     };
-    const onClose = () => {};
-    const onSubmit = () => {
-        console.log(
-            appointmentTypes.find(({ id }) => id === appointmentType),
-            appointmentDescription
-        );
+    const onSubmitBtn = () => {
+        onSubmit({
+            appointmentType: appointmentTypes.find(
+                ({ id }) => id === appointmentType
+            ),
+            description: appointmentDescription
+        });
     };
     return (
         <Modal
@@ -28,12 +32,14 @@ const AppointmentDialog: FC<Props> = function ({ visible }) {
             okText="Add"
             cancelText="Close"
             footer={[
-                <Button key="back">Close</Button>,
+                <Button key="back" onClick={onClose}>
+                    Close
+                </Button>,
                 <Button
                     disabled={!appointmentDescription}
                     key="submit"
                     type="primary"
-                    onClick={onSubmit}
+                    onClick={onSubmitBtn}
                 >
                     Add
                 </Button>
