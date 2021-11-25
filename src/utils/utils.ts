@@ -58,3 +58,15 @@ export const appointmentTypes = [
         color: APPOINTMENT_COLOR.RH
     }
 ];
+
+export const getInitialDate = (
+    date: any,
+    quantity: number | string,
+    type: string
+) =>
+    new Date(
+        moment(date)
+            .startOf('day')
+            .add(quantity as any, type as string)
+            .toLocaleString()
+    );
