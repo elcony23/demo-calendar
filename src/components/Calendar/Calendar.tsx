@@ -34,51 +34,20 @@ const Calendar: FC = function () {
     const currentAppointments = useSelector(selectAppointments);
 
     const getListData = (value: any) => {
-        let listData;
-        const currentDate = moment(value).format('YYYY-MM-DD');
-        return currentAppointments.filter(
-            (currentAppointment: any) =>
-                moment(currentAppointment.date).format('YYYY-MM-DD') ===
-                currentDate
-        );
-        /* switch (value) {
-            case 8:
-                listData = [
-                    { type: 'warning', content: 'This is warning event.' },
-                    { type: 'success', content: 'This is usual event.' }
-                ];
-                break;
-            case 10:
-                listData = [
-                    { type: 'warning', content: 'This is warning event.' },
-                    { type: 'success', content: 'This is usual event.' },
-                    { type: 'error', content: 'This is error event.' }
-                ];
-                break;
-            case 15:
-                listData = [
-                    { type: 'warning', content: 'This is warning event' },
-                    {
-                        type: 'success',
-                        content: 'This is very long usual event。。....'
-                    },
-                    { type: 'error', content: 'This is error event 1.' },
-                    { type: 'error', content: 'This is error event 2.' },
-                    { type: 'error', content: 'This is error event 3.' },
-                    { type: 'error', content: 'This is error event 4.' }
-                ];
-                break;
-            default:
-                listData = [{ type: '', content: '' }];
-                break;
-        } */
+        const currentDate = moment(value).format('DD[/]MM[/]YYYY');
+        return currentAppointments
+            .filter(
+                (currentAppointment: any) =>
+                    currentAppointment.date === currentDate
+            )
+            .map((appointment: any, idx: any) => ({ ...appointment, idx }));
     };
     const dateCellRender = (value: any) => {
         const listData = getListData(value);
         return (
             <ul className="events">
                 {listData.map((item: any) => (
-                    <li key={item.date}>
+                    <li key={item.idx}>
                         <div
                             className="dot"
                             style={{
@@ -107,12 +76,7 @@ const Calendar: FC = function () {
         setVisibleDialog(true);
     };
     const onSubmitDialog = (data: any) => {
-        dispatch(
-            setAppointment({
-                ...data,
-                date: moment().format('YYYY-MM-DD HH:mm')
-            })
-        );
+        dispatch(setAppointment(data));
         setVisibleDialog(false);
     };
     const scheduleStartTime = isEvenDay(selectedDate)

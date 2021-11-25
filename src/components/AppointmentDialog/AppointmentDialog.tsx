@@ -28,11 +28,22 @@ const AppointmentDialog: FC<Props> = memo(
             useState('');
         const [appointmentType, setAppointmentType] = useState(1);
         const [appointmentHourSelected, setAppointmentHour] = useState(0);
+        const appointmentHours = getAppointmentHours(
+            appointmentQuantity,
+            appointmentDate
+        );
         const onSelectChange = (value: any) => {
             setAppointmentType(value);
         };
         const onSubmitBtn = () => {
             onSubmit({
+                date: moment(date).format('DD[/]MM[/]YYYY'),
+                startTime: appointmentHours.find(
+                    ({ id }) => id === appointmentHourSelected
+                )?.startTime,
+                endTime: appointmentHours.find(
+                    ({ id }) => id === appointmentHourSelected
+                )?.endTime,
                 appointmentType: appointmentTypes.find(
                     ({ id }) => id === appointmentType
                 ),
@@ -68,10 +79,7 @@ const AppointmentDialog: FC<Props> = memo(
                         className={Styles['select-appointment']}
                         onChange={(value) => setAppointmentHour(value)}
                     >
-                        {getAppointmentHours(
-                            appointmentQuantity,
-                            appointmentDate
-                        ).map((appointmentHour) => (
+                        {appointmentHours.map((appointmentHour) => (
                             <Option
                                 key={appointmentHour.id}
                                 value={appointmentHour.id}
