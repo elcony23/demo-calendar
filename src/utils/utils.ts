@@ -70,3 +70,22 @@ export const getInitialDate = (
             .add(quantity as any, type as string)
             .toLocaleString()
     );
+
+export const getAppointmentHours = (quantity: number, date: any) =>
+    [...new Array(quantity)].map((value, i) => {
+        const startTime = addDate({
+            date,
+            quantity: 30 * i,
+            type: 'minutes'
+        }).format('HH:mm');
+        const endTime = addDate({
+            date,
+            quantity: 30 * (i + 1),
+            type: 'minutes'
+        }).format('HH:mm');
+        return {
+            id: i,
+            startTime,
+            endTime
+        };
+    });

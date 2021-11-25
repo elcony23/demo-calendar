@@ -8,8 +8,10 @@ import {
     addDate,
     diffDaysInMinutes,
     EVEN_SCHEDULE,
+    getAppointmentHours,
     getInitialDate,
-    isEvenDay
+    isEvenDay,
+    ODD_SCHEDULE
 } from '../../utils/utils';
 import AppointmentDialog from '../AppointmentDialog/AppointmentDialog';
 import {
@@ -113,9 +115,17 @@ const Calendar: FC = function () {
         );
         setVisibleDialog(false);
     };
+    const scheduleStartTime = isEvenDay(selectedDate)
+        ? EVEN_SCHEDULE.OFFICE_HOUR.split('-')[0]
+        : ODD_SCHEDULE.OFFICE_HOUR.split('-')[0];
+    const scheduleEndTime = isEvenDay(selectedDate)
+        ? EVEN_SCHEDULE.OFFICE_HOUR.split('-')[1]
+        : ODD_SCHEDULE.OFFICE_HOUR.split('-')[1];
+
     return (
         <Layout>
             <AppointmentDialog
+                date={selectedDate}
                 visible={visibleDialog}
                 onSubmit={onSubmitDialog}
                 onClose={() => setVisibleDialog(false)}
@@ -136,36 +146,27 @@ const Calendar: FC = function () {
                     >
                         {moment(selectedDate).format('dddd, MMMM Do YYYY')}
                         <div style={{ color: 'blue' }}>
-                            Donaldo
-                            {isEvenDay(selectedDate) ? (
-                                <Appointment
-                                    onClick={onAppoinmentClick}
-                                    date={getInitialDate(
+                            <Appointment
+                                onClick={onAppoinmentClick}
+                                date={getInitialDate(
+                                    selectedDate,
+                                    scheduleStartTime,
+                                    'hours'
+                                )}
+                                countAppointments={diffDaysInMinutes({
+                                    startTime: getInitialDate(
                                         selectedDate,
-                                        EVEN_SCHEDULE.OFFICE_HOUR.split('-')[0],
+                                        scheduleStartTime,
                                         'hours'
-                                    )}
-                                    countAppointments={diffDaysInMinutes({
-                                        startTime: getInitialDate(
-                                            selectedDate,
-                                            EVEN_SCHEDULE.OFFICE_HOUR.split(
-                                                '-'
-                                            )[0],
-                                            'hours'
-                                        ),
-                                        endTime: getInitialDate(
-                                            selectedDate,
-                                            EVEN_SCHEDULE.OFFICE_HOUR.split(
-                                                '-'
-                                            )[1],
-                                            'hours'
-                                        ),
-                                        appointmentDuration: 30
-                                    })}
-                                />
-                            ) : (
-                                'rojo'
-                            )}
+                                    ),
+                                    endTime: getInitialDate(
+                                        selectedDate,
+                                        scheduleEndTime,
+                                        'hours'
+                                    ),
+                                    appointmentDuration: 30
+                                })}
+                            />
                         </div>
                     </div>
                 </Content>
@@ -177,25 +178,13 @@ const Calendar: FC = function () {
 const Appointment = function ({ countAppointments, date, onClick }: any) {
     return (
         <div className={Styles['grid-container']}>
-            {[...new Array(countAppointments)].map((value, i) => {
-                const startHour = addDate({
-                    date,
-                    quantity: 30 * i,
-                    type: 'minutes'
-                }).format('HH:mm');
-                const endHour = addDate({
-                    date,
-                    quantity: 30 * (i + 1),
-                    type: 'minutes'
-                }).format('HH:mm');
-                return (
+            {getAppointmentHours(countAppointments, date).map(
+                (appointmentHour) => (
                     <div
-                        role="none"
-                        onClick={() => onClick(date)}
-                        key={`${startHour} - ${endHour}`}
-                    >{`${startHour} - ${endHour}`}</div>
-                );
-            })}
+                        key={appointmentHour.id}
+                    >{`${appointmentHour.startTime} - ${appointmentHour.endTime}`}</div>
+                )
+            )}
         </div>
     );
 };
