@@ -124,12 +124,32 @@ const Calendar: FC = function () {
 
     return (
         <Layout>
-            <AppointmentDialog
-                date={selectedDate}
-                visible={visibleDialog}
-                onSubmit={onSubmitDialog}
-                onClose={() => setVisibleDialog(false)}
-            />
+            {visibleDialog && (
+                <AppointmentDialog
+                    date={selectedDate}
+                    appointmentQuantity={diffDaysInMinutes({
+                        startTime: getInitialDate(
+                            selectedDate,
+                            scheduleStartTime,
+                            'hours'
+                        ),
+                        endTime: getInitialDate(
+                            selectedDate,
+                            scheduleEndTime,
+                            'hours'
+                        ),
+                        appointmentDuration: 30
+                    })}
+                    appointmentDate={getInitialDate(
+                        selectedDate,
+                        scheduleStartTime,
+                        'hours'
+                    )}
+                    visible={visibleDialog}
+                    onSubmit={onSubmitDialog}
+                    onClose={() => setVisibleDialog(false)}
+                />
+            )}
             <Sider className={Styles['sider-layout']} width={400}>
                 <h1 className={Styles.title}>Appointment calendar</h1>
                 <AntCalendar
@@ -181,6 +201,8 @@ const Appointment = function ({ countAppointments, date, onClick }: any) {
             {getAppointmentHours(countAppointments, date).map(
                 (appointmentHour) => (
                     <div
+                        role="none"
+                        onClick={onClick}
                         key={appointmentHour.id}
                     >{`${appointmentHour.startTime} - ${appointmentHour.endTime}`}</div>
                 )

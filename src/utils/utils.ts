@@ -72,7 +72,7 @@ export const getInitialDate = (
     );
 
 export const getAppointmentHours = (quantity: number, date: any) =>
-    [...new Array(quantity)].map((value, i) => {
+    [...new Array(quantity)].map((_, i) => {
         const startTime = addDate({
             date,
             quantity: 30 * i,
