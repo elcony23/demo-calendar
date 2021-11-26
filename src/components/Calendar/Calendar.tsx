@@ -20,6 +20,7 @@ import {
     setAppointment
 } from '../../redux/appointmentSlice';
 import Dot from '../Dot/Dot';
+import { IAppointmentReducer } from '../../interfaces/interfaces';
 
 const { Content, Sider } = Layout;
 
@@ -31,19 +32,16 @@ const Calendar: FC = function () {
 
     const getListData = (currentDay: moment.Moment) => {
         const currentDate = currentDay.format('DD[/]MM[/]YYYY');
-        return currentAppointments
-            .filter(
-                (currentAppointment: any) =>
-                    currentAppointment.date === currentDate
-            )
-            .map((appointment: any, idx: any) => ({ ...appointment, idx }));
+        return currentAppointments.filter(
+            (currentAppointment: any) => currentAppointment.date === currentDate
+        );
     };
     const dateCellRender = (value: moment.Moment) => {
         const listData = getListData(value);
         return (
             <ul className="events">
-                {listData.map((item: any) => (
-                    <li key={item.idx}>
+                {listData.map((item: IAppointmentReducer, i: number) => (
+                    <li key={i}>
                         <Dot color={item.appointmentType.color} />
                     </li>
                 ))}
@@ -63,7 +61,7 @@ const Calendar: FC = function () {
             currentAppointments
         );
         const currentDayHasAppointments = currentAppointments.some(
-            ({ date }: any) =>
+            ({ date }: IAppointmentReducer) =>
                 date === moment(selectedDate).format('DD[/]MM[/]YYYY')
         );
         if (weeklyAppointments.length < 2) {
@@ -84,7 +82,7 @@ const Calendar: FC = function () {
             });
         }
     };
-    const onSubmitDialog = (data: any) => {
+    const onSubmitDialog = (data: IAppointmentReducer) => {
         dispatch(setAppointment(data));
         setIsDialogVisible(false);
     };
@@ -96,11 +94,11 @@ const Calendar: FC = function () {
         : ODD_SCHEDULE.OFFICE_HOUR.split('-')[1]; // TODO cambiar estos types por objetos
     const getAppointmentsFromWeek = (
         currentDate: Date,
-        appointments: Array<any>
+        appointments: Array<IAppointmentReducer>
     ) => {
         const startDayWeek = moment(currentDate).startOf('week');
         const endDayWeek = moment(currentDate).endOf('week');
-        return appointments.filter(({ date }: any) => {
+        return appointments.filter(({ date }: IAppointmentReducer) => {
             const year = Number(date.split('/')[2]);
             const month = Number((date.split('/')[1] as any) - 1);
             const day = Number(date.split('/')[0]);

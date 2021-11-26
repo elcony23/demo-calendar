@@ -1,5 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import moment from 'moment';
+import { IAppointmentType } from '../interfaces/interfaces';
 
 type DayDiffs = {
     startTime: Date;
@@ -42,7 +43,7 @@ export const APPOINTMENT_COLOR = {
     DEV: '#FFBE86',
     RH: '#FFB5C2'
 };
-export const appointmentTypes = [
+export const appointmentTypes: IAppointmentType[] = [
     {
         id: 1,
         description: 'Design board',

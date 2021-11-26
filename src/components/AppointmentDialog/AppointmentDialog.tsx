@@ -5,6 +5,7 @@ import moment from 'moment';
 import { appointmentTypes, getAppointmentHours } from '../../utils/utils';
 import Styles from './AppointmentDialog.module.scss';
 import Dot from '../Dot/Dot';
+import { IAppointmentType } from '../../interfaces/interfaces';
 
 const { Option } = Select;
 
@@ -97,8 +98,11 @@ const AppointmentDialog: FC<Props> = memo(
                         className={Styles['select-appointment']}
                         onChange={onSelectChange}
                     >
-                        {appointmentTypes.map((type) => (
-                            <Option key={type.id} value={type.id}>
+                        {appointmentTypes.map((type: IAppointmentType) => (
+                            <Option
+                                key={Number(type.id)}
+                                value={Number(type.id)}
+                            >
                                 <Dot
                                     isVisibleDescription
                                     color={type.color}
