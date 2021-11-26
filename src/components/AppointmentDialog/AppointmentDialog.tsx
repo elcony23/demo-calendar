@@ -6,6 +6,7 @@ import { appointmentTypes, getAppointmentHours } from '../../utils/utils';
 import Styles from './AppointmentDialog.module.scss';
 import Dot from '../Dot/Dot';
 import { IAppointmentType } from '../../interfaces/interfaces';
+import Appointment from '../Appointment/Appointment';
 
 const { Option } = Select;
 
@@ -16,6 +17,7 @@ interface Props {
     date: Date;
     appointmentQuantity: number;
     appointmentDate: any;
+    breakTime: any;
 }
 const AppointmentDialog: FC<Props> = memo(
     ({
@@ -24,7 +26,8 @@ const AppointmentDialog: FC<Props> = memo(
         onClose,
         date,
         appointmentDate,
-        appointmentQuantity
+        appointmentQuantity,
+        breakTime
     }) => {
         const [appointmentDescription, setAppointmentDescription] =
             useState('');
@@ -33,6 +36,14 @@ const AppointmentDialog: FC<Props> = memo(
         const appointmentHours = getAppointmentHours(
             appointmentQuantity,
             appointmentDate
+        ).filter(
+            (appointment) =>
+                breakTime.some(
+                    ({ startTime }: any) => startTime !== appointment.startTime
+                ) &&
+                breakTime.some(
+                    ({ endTime }: any) => endTime !== appointment.endTime
+                )
         );
         const onSelectChange = (value: any) => {
             setAppointmentType(value);

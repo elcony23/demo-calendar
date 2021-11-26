@@ -87,12 +87,17 @@ const Calendar: FC = function () {
         dispatch(setAppointment(data));
         setIsDialogVisible(false);
     };
+    const getSpecialPeriod = (date: Date) =>
+        isEvenDay(date) ? EVEN_SCHEDULE.BREAK_TIME : ODD_SCHEDULE.BREAK_TIME;
+
     const scheduleStartTime = isEvenDay(selectedDate)
-        ? EVEN_SCHEDULE.OFFICE_HOUR.split('-')[0]
-        : ODD_SCHEDULE.OFFICE_HOUR.split('-')[0];
+        ? EVEN_SCHEDULE.START_TIME
+        : ODD_SCHEDULE.START_TIME;
+
     const scheduleEndTime = isEvenDay(selectedDate)
-        ? EVEN_SCHEDULE.OFFICE_HOUR.split('-')[1]
-        : ODD_SCHEDULE.OFFICE_HOUR.split('-')[1]; // TODO cambiar estos types por objetos
+        ? EVEN_SCHEDULE.END_TIME
+        : ODD_SCHEDULE.END_TIME;
+
     const getAppointmentsFromWeek = (
         currentDate: Date,
         appointments: Array<IAppointmentReducer>
@@ -109,12 +114,12 @@ const Calendar: FC = function () {
             );
         });
     };
-    // TODO APPOINTMENNTCARD
     return (
         <Layout>
             {isDialogVisible && (
                 <AppointmentDialog
                     date={selectedDate}
+                    breakTime={getSpecialPeriod(selectedDate)}
                     appointmentQuantity={diffDaysInMinutes({
                         startTime: getInitialDate(
                             selectedDate,
@@ -149,15 +154,24 @@ const Calendar: FC = function () {
             <Layout className="site-layout">
                 <Content className={Styles['layout-content']}>
                     <div className="site-layout-background">
-                        {moment(selectedDate).format('dddd, MMMM Do YYYY')}
-                        <Button
-                            onClick={onNewAppointment}
-                            className={Styles.btn}
-                            size="large"
-                        >
-                            Schedule appointment
-                        </Button>
+                        <div className={Styles['container-create-appointment']}>
+                            <div className={Styles['selected-date']}>
+                                {moment(selectedDate).format(
+                                    'dddd, MMMM Do YYYY'
+                                )}
+                            </div>
+                            <Button
+                                onClick={onNewAppointment}
+                                className={Styles.btn}
+                                size="large"
+                            >
+                                Schedule appointment
+                            </Button>
+                        </div>
                         <Appointment
+                            breakTimeAppointments={getSpecialPeriod(
+                                selectedDate
+                            )}
                             scheduledAppointments={currentAppointments}
                             currentDate={getInitialDate(
                                 selectedDate,
@@ -178,80 +192,10 @@ const Calendar: FC = function () {
                                 appointmentDuration: 30
                             })}
                         />
-                        {/* <Appointment
-                            date={getInitialDate(
-                                selectedDate,
-                                scheduleStartTime,
-                                'hours'
-                            )}
-                            numAppointments={diffDaysInMinutes({
-                                startTime: getInitialDate(
-                                    selectedDate,
-                                    scheduleStartTime,
-                                    'hours'
-                                ),
-                                endTime: getInitialDate(
-                                    selectedDate,
-                                    scheduleEndTime,
-                                    'hours'
-                                ),
-                                appointmentDuration: 30
-                            })}
-                            selectedAppointments={currentAppointments}
-                          /> */}
                     </div>
                 </Content>
             </Layout>
         </Layout>
     );
 };
-
-/* const Appointment = function ({
-    numAppointments,
-    date,
-    selectedAppointments
-}: any) {
-    // TODO sacar esta funcion y hacer el dot
-    const filterAppointmentsByDay = selectedAppointments.filter(
-        (selectedAppointment: any) =>
-            selectedAppointment.date === moment(date).format('DD[/]MM[/]YYYY')
-    );
-    const appointments = getAppointmentHours(numAppointments, date);
-    return (
-        <div className={Styles['grid-container']}>
-            {appointments.map((appointmentHour) => {
-                // TODO abstraer esta parte
-                const filterHours = filterAppointmentsByDay.filter(
-                    (appointment: any) =>
-                        appointment.startTime === appointmentHour.startTime &&
-                        appointment.endTime === appointmentHour.endTime
-                );
-                return (
-                    <div
-                        className={Styles['item-appointment']}
-                        key={appointmentHour.id}
-                    >
-                        <div
-                            className={Styles['appointment-hour']}
-                        >{`${appointmentHour.startTime} - ${appointmentHour.endTime}`}</div>
-                        <div>
-                            {filterHours.map((hour: any) => (
-                                <div key={hour.description}>
-                                    <div
-                                        className="dot"
-                                        style={{
-                                            backgroundColor:
-                                                hour.appointmentType.color
-                                        }}
-                                    />
-                                    {hour.description}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                );
-            })}
-        </div>
-    );
-}; */
 export default Calendar;

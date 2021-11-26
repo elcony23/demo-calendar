@@ -28,7 +28,7 @@
 
 .btn{
   border-radius: 8px !important;
-  background-color: red;
+  margin-left: 20px !important;
 }
 
 .appointment-hour{
@@ -36,4 +36,15 @@
     border-top-right-radius: 20px;
     border-top-left-radius: 20px;
     padding: 8px;
+}
+.container-create-appointment{
+  display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.selected-date{
+  color:#381704;
+	  font-size:15px;
+	  letter-spacing:0.1em;
 }

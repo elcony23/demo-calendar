@@ -10,11 +10,13 @@ interface Props {
     numAppointments: Number;
     currentDate: Date | moment.Moment;
     scheduledAppointments: IAppointmentReducer[];
+    breakTimeAppointments: Array<any>;
 }
 const Appointment: FC<Props> = function ({
     numAppointments,
     currentDate,
-    scheduledAppointments
+    scheduledAppointments,
+    breakTimeAppointments
 }) {
     const filterAppointmentsByDay = scheduledAppointments.filter(
         (selectedAppointment: any) =>
@@ -33,8 +35,14 @@ const Appointment: FC<Props> = function ({
                         hour.startTime === appointment.startTime &&
                         hour.endTime === appointment.endTime
                 );
+                const isBreakTime = !!breakTimeAppointments.find(
+                    ({ startTime, endTime }) =>
+                        startTime === appointment.startTime &&
+                        endTime === appointment.endTime
+                );
                 return (
                     <AppointmentCard
+                        isBreakTime={isBreakTime}
                         key={i}
                         startTime={appointment.startTime}
                         endTime={appointment.endTime}
