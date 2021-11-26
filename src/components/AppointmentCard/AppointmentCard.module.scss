@@ -4,6 +4,12 @@
   border-radius: 20px;
 }
 
+.item-appointment-disabled{
+  background-color: #f2f2f2;
+  box-shadow: 0 0 20px 8px #d0d0d0;
+  border-radius: 20px;
+  opacity: .4;
+}
 .appointment-hour{
   background: antiquewhite;
   border-top-right-radius: 20px;

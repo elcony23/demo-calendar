@@ -16,13 +16,23 @@ const AppointmentCard: FC<Props> = function ({
     isBreakTime
 }) {
     return (
-        <div className={Styles['item-appointment']}>
+        <div
+            className={
+                Styles[
+                    `${
+                        isBreakTime
+                            ? 'item-appointment-disabled'
+                            : 'item-appointment'
+                    }`
+                ]
+            }
+        >
             <div
                 className={Styles['appointment-hour']}
             >{`${startTime} - ${endTime}`}</div>
             <div className={Styles['dot-container']}>
                 {isBreakTime ? (
-                    <div>Break time</div>
+                    <strong>Break time</strong>
                 ) : (
                     appointmentsRange.map((range: any, index) => (
                         <Dot
