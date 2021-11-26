@@ -17,7 +17,6 @@ interface Props {
     appointmentQuantity: number;
     appointmentDate: any;
 }
-// TODO Remover fragments remover br
 const AppointmentDialog: FC<Props> = memo(
     ({
         visible,

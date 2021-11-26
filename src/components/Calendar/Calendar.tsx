@@ -21,6 +21,7 @@ import {
 } from '../../redux/appointmentSlice';
 import Dot from '../Dot/Dot';
 import { IAppointmentReducer } from '../../interfaces/interfaces';
+import Appointment from '../Appointment/Appointment';
 
 const { Content, Sider } = Layout;
 
@@ -157,6 +158,27 @@ const Calendar: FC = function () {
                             Schedule appointment
                         </Button>
                         <Appointment
+                            scheduledAppointments={currentAppointments}
+                            currentDate={getInitialDate(
+                                selectedDate,
+                                scheduleStartTime,
+                                'hours'
+                            )}
+                            numAppointments={diffDaysInMinutes({
+                                startTime: getInitialDate(
+                                    selectedDate,
+                                    scheduleStartTime,
+                                    'hours'
+                                ),
+                                endTime: getInitialDate(
+                                    selectedDate,
+                                    scheduleEndTime,
+                                    'hours'
+                                ),
+                                appointmentDuration: 30
+                            })}
+                        />
+                        {/* <Appointment
                             date={getInitialDate(
                                 selectedDate,
                                 scheduleStartTime,
@@ -176,7 +198,7 @@ const Calendar: FC = function () {
                                 appointmentDuration: 30
                             })}
                             selectedAppointments={currentAppointments}
-                        />
+                          /> */}
                     </div>
                 </Content>
             </Layout>
@@ -184,7 +206,7 @@ const Calendar: FC = function () {
     );
 };
 
-const Appointment = function ({
+/* const Appointment = function ({
     numAppointments,
     date,
     selectedAppointments
@@ -231,5 +253,5 @@ const Appointment = function ({
             })}
         </div>
     );
-};
+}; */
 export default Calendar;
