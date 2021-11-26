@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { appointmentTypes, getAppointmentHours } from '../../utils/utils';
 import Styles from './AppointmentDialog.module.scss';
+import Dot from '../Dot/Dot';
 
 const { Option } = Select;
 
@@ -15,6 +16,7 @@ interface Props {
     appointmentQuantity: number;
     appointmentDate: any;
 }
+// TODO Remover fragments remover br
 const AppointmentDialog: FC<Props> = memo(
     ({
         visible,
@@ -36,14 +38,14 @@ const AppointmentDialog: FC<Props> = memo(
             setAppointmentType(value);
         };
         const onSubmitBtn = () => {
+            const { startTime, endTime } =
+                appointmentHours.find(
+                    ({ id }) => id === appointmentHourSelected
+                ) || {};
             onSubmit({
                 date: moment(date).format('DD[/]MM[/]YYYY'),
-                startTime: appointmentHours.find(
-                    ({ id }) => id === appointmentHourSelected
-                )?.startTime,
-                endTime: appointmentHours.find(
-                    ({ id }) => id === appointmentHourSelected
-                )?.endTime,
+                startTime,
+                endTime,
                 appointmentType: appointmentTypes.find(
                     ({ id }) => id === appointmentType
                 ),
@@ -73,28 +75,23 @@ const AppointmentDialog: FC<Props> = memo(
                     </Button>
                 ]}
             >
+                <h4>Hour</h4>
+                <Select
+                    defaultValue={appointmentHourSelected}
+                    className={Styles['select-appointment']}
+                    onChange={(value) => setAppointmentHour(value)}
+                >
+                    {appointmentHours.map((appointmentHour) => (
+                        <Option
+                            key={appointmentHour.id}
+                            value={appointmentHour.id}
+                        >
+                            <div>{`${appointmentHour.startTime} - ${appointmentHour.endTime}`}</div>
+                        </Option>
+                    ))}
+                </Select>
                 <>
-                    <h4>Hour</h4>
-                    <Select
-                        defaultValue={appointmentHourSelected}
-                        className={Styles['select-appointment']}
-                        onChange={(value) => setAppointmentHour(value)}
-                    >
-                        {appointmentHours.map((appointmentHour) => (
-                            <Option
-                                key={appointmentHour.id}
-                                value={appointmentHour.id}
-                            >
-                                <div>{`${appointmentHour.startTime} - ${appointmentHour.endTime}`}</div>
-                            </Option>
-                        ))}
-                    </Select>
-                </>
-
-                <br />
-                <br />
-                <>
-                    <h4>Appointmet type</h4>
+                    <h4>Type</h4>
                     <Select
                         defaultValue={appointmentType}
                         className={Styles['select-appointment']}
@@ -102,15 +99,17 @@ const AppointmentDialog: FC<Props> = memo(
                     >
                         {appointmentTypes.map((type) => (
                             <Option key={type.id} value={type.id}>
-                                <AppointmentOption type={type} />
+                                <Dot
+                                    isVisibleDescription
+                                    color={type.color}
+                                    description={type.description}
+                                />
                             </Option>
                         ))}
                     </Select>
                 </>
-                <br />
-                <br />
                 <>
-                    <h4>Appointment description</h4>
+                    <h4>Description</h4>
                     <Input
                         type="text"
                         placeholder="Appointment description"
@@ -125,15 +124,4 @@ const AppointmentDialog: FC<Props> = memo(
         );
     }
 );
-const AppointmentOption = function ({ type }: any) {
-    return (
-        <div className={Styles['option-container']}>
-            <div
-                className={Styles.dot}
-                style={{ backgroundColor: type.color }}
-            />
-            <div>{type.description}</div>
-        </div>
-    );
-};
 export default AppointmentDialog;

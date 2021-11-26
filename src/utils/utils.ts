@@ -11,6 +11,7 @@ type TAddDate = {
     quantity: Number;
     type: String;
 };
+// TODO CHANGE getNumAppointmentsInRange
 export const diffDaysInMinutes = ({
     startTime,
     endTime,
@@ -19,7 +20,7 @@ export const diffDaysInMinutes = ({
     Math.round((endTime.getTime() - startTime.getTime()) / 60000) /
     Number(appointmentDuration);
 
-export const isEvenDay = (day: Date) =>
+export const isEvenDay = (day: Date | moment.Moment) =>
     (moment(day).format('D') as any) % 2 === 0;
 export const EVEN_SCHEDULE = {
     OFFICE_HOUR: '08:00-14:00',
@@ -58,7 +59,7 @@ export const appointmentTypes = [
         color: APPOINTMENT_COLOR.RH
     }
 ];
-
+// TODO CAMBIAR NOMBRE
 export const getInitialDate = (
     date: any,
     quantity: number | string,

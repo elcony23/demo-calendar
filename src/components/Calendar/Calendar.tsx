@@ -19,17 +19,18 @@ import {
     selectAppointments,
     setAppointment
 } from '../../redux/appointmentSlice';
+import Dot from '../Dot/Dot';
 
 const { Content, Sider } = Layout;
 
 const Calendar: FC = function () {
     const [selectedDate, setSelectedDate] = useState(new Date());
-    const [visibleDialog, setVisibleDialog] = useState(false);
+    const [isDialogVisible, setIsDialogVisible] = useState(false);
     const dispatch = useDispatch();
     const currentAppointments = useSelector(selectAppointments);
 
-    const getListData = (value: any) => {
-        const currentDate = moment(value).format('DD[/]MM[/]YYYY');
+    const getListData = (currentDay: moment.Moment) => {
+        const currentDate = currentDay.format('DD[/]MM[/]YYYY');
         return currentAppointments
             .filter(
                 (currentAppointment: any) =>
@@ -37,37 +38,26 @@ const Calendar: FC = function () {
             )
             .map((appointment: any, idx: any) => ({ ...appointment, idx }));
     };
-    const dateCellRender = (value: any) => {
+    const dateCellRender = (value: moment.Moment) => {
         const listData = getListData(value);
         return (
             <ul className="events">
                 {listData.map((item: any) => (
                     <li key={item.idx}>
-                        <div
-                            className="dot"
-                            style={{
-                                backgroundColor: item.appointmentType.color
-                            }}
-                        />
+                        <Dot color={item.appointmentType.color} />
                     </li>
                 ))}
             </ul>
         );
     };
-    const disabledDate = (currentDay: any) => {
-        let disabled = false;
-        switch (currentDay.isoWeekday()) {
-            case 6:
-                disabled = !isEvenDay(currentDay);
-                break;
-            case 7:
-                disabled = true;
-                break;
-            default:
+    const disabledDate = (currentDay: moment.Moment) => {
+        if (currentDay.isoWeekday() === 6) {
+            return !isEvenDay(currentDay);
         }
-        return disabled;
+        if (currentDay.isoWeekday() === 7) return true;
+        return false;
     };
-    const onNewAppointment = (event: any) => {
+    const onNewAppointment = () => {
         const weeklyAppointments = getAppointmentsFromWeek(
             selectedDate,
             currentAppointments
@@ -78,7 +68,7 @@ const Calendar: FC = function () {
         );
         if (weeklyAppointments.length < 2) {
             if (!currentDayHasAppointments) {
-                setVisibleDialog(true);
+                setIsDialogVisible(true);
             } else {
                 Swal.fire({
                     icon: 'error',
@@ -96,14 +86,14 @@ const Calendar: FC = function () {
     };
     const onSubmitDialog = (data: any) => {
         dispatch(setAppointment(data));
-        setVisibleDialog(false);
+        setIsDialogVisible(false);
     };
     const scheduleStartTime = isEvenDay(selectedDate)
         ? EVEN_SCHEDULE.OFFICE_HOUR.split('-')[0]
         : ODD_SCHEDULE.OFFICE_HOUR.split('-')[0];
     const scheduleEndTime = isEvenDay(selectedDate)
         ? EVEN_SCHEDULE.OFFICE_HOUR.split('-')[1]
-        : ODD_SCHEDULE.OFFICE_HOUR.split('-')[1];
+        : ODD_SCHEDULE.OFFICE_HOUR.split('-')[1]; // TODO cambiar estos types por objetos
     const getAppointmentsFromWeek = (
         currentDate: Date,
         appointments: Array<any>
@@ -120,9 +110,10 @@ const Calendar: FC = function () {
             );
         });
     };
+    // TODO APPOINTMENNTCARD
     return (
         <Layout>
-            {visibleDialog && (
+            {isDialogVisible && (
                 <AppointmentDialog
                     date={selectedDate}
                     appointmentQuantity={diffDaysInMinutes({
@@ -143,9 +134,9 @@ const Calendar: FC = function () {
                         scheduleStartTime,
                         'hours'
                     )}
-                    visible={visibleDialog}
+                    visible={isDialogVisible}
                     onSubmit={onSubmitDialog}
-                    onClose={() => setVisibleDialog(false)}
+                    onClose={() => setIsDialogVisible(false)}
                 />
             )}
             <Sider className={Styles['sider-layout']} width={400}>
@@ -173,7 +164,7 @@ const Calendar: FC = function () {
                                 scheduleStartTime,
                                 'hours'
                             )}
-                            countAppointments={diffDaysInMinutes({
+                            numAppointments={diffDaysInMinutes({
                                 startTime: getInitialDate(
                                     selectedDate,
                                     scheduleStartTime,
@@ -196,50 +187,50 @@ const Calendar: FC = function () {
 };
 
 const Appointment = function ({
-    countAppointments,
+    numAppointments,
     date,
     selectedAppointments
 }: any) {
+    // TODO sacar esta funcion y hacer el dot
     const filterAppointmentsByDay = selectedAppointments.filter(
         (selectedAppointment: any) =>
             selectedAppointment.date === moment(date).format('DD[/]MM[/]YYYY')
     );
+    const appointments = getAppointmentHours(numAppointments, date);
     return (
         <div className={Styles['grid-container']}>
-            {getAppointmentHours(countAppointments, date).map(
-                (appointmentHour) => {
-                    const filterHours = filterAppointmentsByDay.filter(
-                        (appointment: any) =>
-                            appointment.startTime ===
-                                appointmentHour.startTime &&
-                            appointment.endTime === appointmentHour.endTime
-                    );
-                    return (
+            {appointments.map((appointmentHour) => {
+                // TODO abstraer esta parte
+                const filterHours = filterAppointmentsByDay.filter(
+                    (appointment: any) =>
+                        appointment.startTime === appointmentHour.startTime &&
+                        appointment.endTime === appointmentHour.endTime
+                );
+                return (
+                    <div
+                        className={Styles['item-appointment']}
+                        key={appointmentHour.id}
+                    >
                         <div
-                            className={Styles['item-appointment']}
-                            key={appointmentHour.id}
-                        >
-                            <div
-                                className={Styles['appointment-hour']}
-                            >{`${appointmentHour.startTime} - ${appointmentHour.endTime}`}</div>
-                            <div>
-                                {filterHours.map((hour: any) => (
-                                    <div key={hour.description}>
-                                        <div
-                                            className="dot"
-                                            style={{
-                                                backgroundColor:
-                                                    hour.appointmentType.color
-                                            }}
-                                        />
-                                        {hour.description}
-                                    </div>
-                                ))}
-                            </div>
+                            className={Styles['appointment-hour']}
+                        >{`${appointmentHour.startTime} - ${appointmentHour.endTime}`}</div>
+                        <div>
+                            {filterHours.map((hour: any) => (
+                                <div key={hour.description}>
+                                    <div
+                                        className="dot"
+                                        style={{
+                                            backgroundColor:
+                                                hour.appointmentType.color
+                                        }}
+                                    />
+                                    {hour.description}
+                                </div>
+                            ))}
                         </div>
-                    );
-                }
-            )}
+                    </div>
+                );
+            })}
         </div>
     );
 };
