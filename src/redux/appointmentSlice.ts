@@ -1,9 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { randomAppointments } from '../utils/randomAppointments';
 
 const appointmentSlice = createSlice({
     name: 'appointments',
     initialState: {
-        appointments: []
+        appointments: randomAppointments
     },
     reducers: {
         setAppointment: (state, action) => {

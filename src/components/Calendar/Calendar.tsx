@@ -30,7 +30,6 @@ const Calendar: FC = function () {
     const [isDialogVisible, setIsDialogVisible] = useState(false);
     const dispatch = useDispatch();
     const currentAppointments = useSelector(selectAppointments);
-
     const getListData = (currentDay: moment.Moment) => {
         const currentDate = currentDay.format('DD[/]MM[/]YYYY');
         return currentAppointments.filter(
