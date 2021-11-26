@@ -58,3 +58,7 @@
   display: inline-block;
   margin-right: 15px;
 }
+.site-layout-background{
+  padding: 24px;
+  text-align: center;
+}

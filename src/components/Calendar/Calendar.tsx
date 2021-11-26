@@ -1,9 +1,10 @@
 import React, { FC, useState } from 'react';
-import { Calendar as AntCalendar, Layout, Badge } from 'antd';
+import Swal from 'sweetalert2';
+import { Calendar as AntCalendar, Layout, Badge, Button, Alert } from 'antd';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
-import Item from 'antd/lib/list/Item';
 import Styles from './Calendar.module.scss';
+
 import {
     addDate,
     diffDaysInMinutes,
@@ -19,13 +20,7 @@ import {
     setAppointment
 } from '../../redux/appointmentSlice';
 
-const { Content, Footer, Sider } = Layout;
-
-type TypeListData = {
-    type: WarningTypes;
-    content?: String;
-};
-type WarningTypes = 'warning' | 'error' | 'success';
+const { Content, Sider } = Layout;
 
 const Calendar: FC = function () {
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -72,8 +67,32 @@ const Calendar: FC = function () {
         }
         return disabled;
     };
-    const onAppoinmentClick = (hour: any) => {
-        setVisibleDialog(true);
+    const onNewAppointment = (event: any) => {
+        const weeklyAppointments = getAppointmentsFromWeek(
+            selectedDate,
+            currentAppointments
+        );
+        const currentDayHasAppointments = currentAppointments.some(
+            ({ date }: any) =>
+                date === moment(selectedDate).format('DD[/]MM[/]YYYY')
+        );
+        if (weeklyAppointments.length < 2) {
+            if (!currentDayHasAppointments) {
+                setVisibleDialog(true);
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'This day has already an appointment scheduled'
+                });
+            }
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'You can only schedule 2 appointments per week'
+            });
+        }
     };
     const onSubmitDialog = (data: any) => {
         dispatch(setAppointment(data));
@@ -85,7 +104,22 @@ const Calendar: FC = function () {
     const scheduleEndTime = isEvenDay(selectedDate)
         ? EVEN_SCHEDULE.OFFICE_HOUR.split('-')[1]
         : ODD_SCHEDULE.OFFICE_HOUR.split('-')[1];
-
+    const getAppointmentsFromWeek = (
+        currentDate: Date,
+        appointments: Array<any>
+    ) => {
+        const startDayWeek = moment(currentDate).startOf('week');
+        const endDayWeek = moment(currentDate).endOf('week');
+        return appointments.filter(({ date }: any) => {
+            const year = Number(date.split('/')[2]);
+            const month = Number((date.split('/')[1] as any) - 1);
+            const day = Number(date.split('/')[0]);
+            return moment(new Date(year, month, day)).isBetween(
+                startDayWeek,
+                endDayWeek
+            );
+        });
+    };
     return (
         <Layout>
             {visibleDialog && (
@@ -123,36 +157,37 @@ const Calendar: FC = function () {
                 />
             </Sider>
             <Layout className="site-layout">
-                <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
-                    <div
-                        className="site-layout-background"
-                        style={{ padding: 24, textAlign: 'center' }}
-                    >
+                <Content className={Styles['layout-content']}>
+                    <div className="site-layout-background">
                         {moment(selectedDate).format('dddd, MMMM Do YYYY')}
-                        <div style={{ color: 'blue' }}>
-                            <Appointment
-                                onClick={onAppoinmentClick}
-                                date={getInitialDate(
+                        <Button
+                            onClick={onNewAppointment}
+                            className={Styles.btn}
+                            size="large"
+                        >
+                            Schedule appointment
+                        </Button>
+                        <Appointment
+                            date={getInitialDate(
+                                selectedDate,
+                                scheduleStartTime,
+                                'hours'
+                            )}
+                            countAppointments={diffDaysInMinutes({
+                                startTime: getInitialDate(
                                     selectedDate,
                                     scheduleStartTime,
                                     'hours'
-                                )}
-                                countAppointments={diffDaysInMinutes({
-                                    startTime: getInitialDate(
-                                        selectedDate,
-                                        scheduleStartTime,
-                                        'hours'
-                                    ),
-                                    endTime: getInitialDate(
-                                        selectedDate,
-                                        scheduleEndTime,
-                                        'hours'
-                                    ),
-                                    appointmentDuration: 30
-                                })}
-                                selectedAppointments={currentAppointments}
-                            />
-                        </div>
+                                ),
+                                endTime: getInitialDate(
+                                    selectedDate,
+                                    scheduleEndTime,
+                                    'hours'
+                                ),
+                                appointmentDuration: 30
+                            })}
+                            selectedAppointments={currentAppointments}
+                        />
                     </div>
                 </Content>
             </Layout>
@@ -163,14 +198,12 @@ const Calendar: FC = function () {
 const Appointment = function ({
     countAppointments,
     date,
-    onClick,
     selectedAppointments
 }: any) {
     const filterAppointmentsByDay = selectedAppointments.filter(
         (selectedAppointment: any) =>
             selectedAppointment.date === moment(date).format('DD[/]MM[/]YYYY')
     );
-    console.log(filterAppointmentsByDay);
     return (
         <div className={Styles['grid-container']}>
             {getAppointmentHours(countAppointments, date).map(
@@ -183,23 +216,23 @@ const Appointment = function ({
                     );
                     return (
                         <div
-                            role="none"
-                            onClick={onClick}
+                            className={Styles['item-appointment']}
                             key={appointmentHour.id}
                         >
-                            {`${appointmentHour.startTime} - ${appointmentHour.endTime}`}
+                            <div
+                                className={Styles['appointment-hour']}
+                            >{`${appointmentHour.startTime} - ${appointmentHour.endTime}`}</div>
                             <div>
                                 {filterHours.map((hour: any) => (
-                                    <div>
-                                        {' '}
+                                    <div key={hour.description}>
                                         <div
                                             className="dot"
                                             style={{
                                                 backgroundColor:
                                                     hour.appointmentType.color
                                             }}
-                                        />{' '}
-                                        {hour.description}{' '}
+                                        />
+                                        {hour.description}
                                     </div>
                                 ))}
                             </div>

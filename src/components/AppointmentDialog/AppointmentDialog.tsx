@@ -58,6 +58,7 @@ const AppointmentDialog: FC<Props> = memo(
                 visible={visible as any}
                 okText="Add"
                 cancelText="Close"
+                onCancel={onClose}
                 footer={[
                     <Button key="back" onClick={onClose}>
                         Close
