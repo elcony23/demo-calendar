@@ -14,33 +14,36 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
 
-### `yarn test`
+## Demo docs
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `yarn build`
+Home Screen
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Appointment types
+```
+* Design board
+* Developers board
+* Rh board
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+![alt tag](https://imagesqc.s3.amazonaws.com/home.png)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+On the left side you can see the calendar where you can only choose available days. if the day has already an appointment it shows you a circle, the color of the circle depends on the appointment type.
+The right side you can see detailed information about the appointments of the day
 
-### `yarn eject`
+If you want to create an appointment you need to press the schedule appointment button and opens a dialog create appointment.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Dialog create appointment
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+In this part you can generate an appointment, you can choose the hour, appointment type and description about the topic of the appointment.
+The add button only be enable when the user writes a description.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+![alt tag](https://imagesqc.s3.amazonaws.com/dialog.png)
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## Errors
 
-## Learn More
+![alt tag](https://imagesqc.s3.amazonaws.com/error1.png)
+If you have selected a date that has an appointment it shows you a message
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+![alt tag](https://imagesqc.s3.amazonaws.com/error2.png)
+You can only choose a maximum of 2 appointments per week
